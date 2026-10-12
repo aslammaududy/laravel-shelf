@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\User;
+
 test('login successfully with non lowercase email address', function () {
-    \App\Models\User::factory()->create([
+    User::factory()->create([
         'email' => 'aslam@mail.com',
         'password' => 'password',
     ]);
@@ -15,7 +17,7 @@ test('login successfully with non lowercase email address', function () {
 });
 
 test('logout successfully revokes the token', function () {
-    $user = \App\Models\User::factory()->create([
+    $user = User::factory()->create([
         'email' => 'aslam@mail.com',
         'password' => 'password',
     ]);
