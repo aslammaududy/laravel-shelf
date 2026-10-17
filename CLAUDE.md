@@ -148,3 +148,55 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - After the feature tests pass, ask the user to run the complete suite with `php artisan test --compact`.
 
 </laravel-boost-guidelines>
+
+# Shelf: how Claude works here
+
+Shelf is a learning project. The user writes the code to get better at writing code. Claude reviews it. Claude does not write app code unless the user asks.
+
+## Reply style
+
+Reply in caveman style (full) in all Shelf work: reviews, explanations and insights. Drop filler, articles and pleasantries, keep every technical detail exact. Files, docs and memory stay in normal prose.
+
+## Status
+
+- Done in Laravel: schema, auth (login, logout, /me), Problem Details error rendering.
+- In progress: slice 1 upload (`DocumentController::store`, `DocumentRequest`, `DocumentDataObject`, `UploadDocumentAction`, `DocumentResource`). Several review passes done on 2026-10-14 to 2026-10-17. The last pass on 2026-10-17 found no open findings. Next: the user runs the Hurl tests for upload, then moves on to the next slice 1 endpoint.
+- Withdrawn findings, do not raise again: `$this->authorize` in `store` (slice 5); controller reading the file and passing it beside the DTO (lines 30/32) is fine.
+
+## Reviews
+
+The goal of every review is better code, not passing tests.
+
+1. **Review only the files the user names.** "The store method and its dependencies" means the controller method, its FormRequest, its data object, its action (and the services the action calls), and its resource. Do not pull in policies, tests, migrations, config or other endpoints unless the user names them.
+2. **Review only against the current slice.** Never raise work that the slice plan below puts in a later slice, not even as a "minor" note or a question. If you are unsure which slice something belongs to, check the PRD before raising it.
+3. **Judge the code as code.** Responsibility (does each piece have one job?), data flow, types, naming, PHP and Laravel idiom, correctness, simplicity. Explain why, so the user learns the principle, not only the fix. A principle (single owner, SRP, DRY) is a tool, not a goal: raise it only when it removes a real cost in this code. If the fix adds code, files or indirection and removes no cost, keep the simpler code and do not raise it.
+4. **No "what if later" findings.** Judge the code by what it does today. Do not justify a finding with a future use case (a CLI import, a queue job, a test that does not exist). If the only argument is the future, drop the finding. If a finding is low priority, say so plainly.
+5. **No Hurl section.** The user runs the Hurl tests and finds those breaks on their own. Do not list where the code breaks the Hurl tests or the OpenAPI, and never use a Hurl test or the spec as the reason for a finding. Every finding must stand on the code alone.
+6. **Read only.** Never run migrations, seeders or tinker while reviewing unless the user asks.
+7. **Delegated reviews get the same rules.** When a subagent reviews, give it the file list, the current slice and these rules.
+
+## Slice plan (from the PRD)
+
+Every build (Laravel, then .NET, then Loco) delivers the API in these slices:
+
+1. **Sign-in and documents**: upload, list, view, edit, preview, download (FR-1, FR-3, FR-5). **Current slice.**
+2. **Folders and tags** (FR-2).
+3. **Search** (FR-4).
+4. **Trash and the purge job** (FR-7).
+5. **Access control and audit log** (FR-6, FR-9): roles, per-folder permissions, policies, authorization, 403. The OpenAPI marks 403 as "used from slice 5".
+
+After slice 5: OCR, duplicate detection, share links, retention rules (FR-8, FR-10, FR-11, FR-12).
+
+So before slice 5, these are out of scope: policies, `$this->authorize`, FormRequest `authorize()`, who may see or edit what, IDOR, roles, audit logging. OCR and duplicate detection are out of scope until after slice 5.
+
+Update the "Current slice" marker when the user moves on.
+
+## Architecture
+
+- Service + action. A controller calls one action. Actions call services. An action never calls another action.
+- The same JSON API is built three times and compared, so advice stays consistent across the stacks.
+
+## Sources
+
+- PRD, API design, OpenAPI and Hurl tabs: https://claude.ai/code/artifact/84f92aec-7c24-4af3-97a3-535cd5580045 (read it with the docs tools, never web-fetch it).
+- Shared Hurl tests: `~/Documents/Projects/shelf-tests`.
