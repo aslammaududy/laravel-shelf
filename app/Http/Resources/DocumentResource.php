@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin Document */
 class DocumentResource extends JsonResource
 {
+    public static $wrap = null;
     public function toArray(Request $request): array
     {
         return [
@@ -26,7 +27,7 @@ class DocumentResource extends JsonResource
             'updated_at' => $this->updated_at,
 
             'folder_id' => $this->folder_id,
-            'uploaded_by' => $this->uploaded_by,
+            'uploaded_by' => $this->uploadedBy,
 
             'folder' => new FolderResource($this->whenLoaded('folder')),
         ];
