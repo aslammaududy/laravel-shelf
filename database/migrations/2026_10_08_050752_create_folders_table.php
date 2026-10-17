@@ -4,7 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -21,7 +20,7 @@ return new class extends Migration
         });
 
         DB::table('folders')->insert([
-            'id' => (string) Str::uuid7(),
+            'id' => '01a13e2c-4342-704f-b55b-e7c90248e3cd',
             'parent_id' => null,
             'name' => 'Inbox',
             'created_by' => null,

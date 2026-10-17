@@ -2,31 +2,44 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\DocumentType;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DocumentRequest extends FormRequest
 {
+    private const int MAX_UPLOAD_SIZE_KB = 102400;
+
+    private const string ALLOWED_TYPES = 'pdf,jpeg,png,webp,tiff,docx,xlsx';
+
     public function rules(): array
     {
         return [
-            'parent_id' => ['required', 'exists:folders'],
-            'title' => ['required'],
-            'original_filename' => ['required'],
-            'mime_type' => ['required'],
-            'size_bytes' => ['required', 'integer'],
-            'sha256' => ['required'],
-            'storage_key' => ['required'],
-            'doc_type' => ['required'],
-            'document_date' => ['required', 'date'],
-            'notes' => ['nullable'],
-            'content_text' => ['nullable'],
-            'search_vector' => ['required', 'integer'],
-            'uploaded_by' => ['required', 'exists:users'],
+            'folder_id' => ['nullable', 'uuid', Rule::exists('folders', 'id')],
+            'title' => ['nullable', 'string'],
+            'file' => ['required', 'file', 'mimes:'.self::ALLOWED_TYPES, 'max:'.self::MAX_UPLOAD_SIZE_KB],
+            'doc_type' => ['nullable', Rule::enum(DocumentType::class)],
+            'notes' => ['nullable', 'string', 'max:10000'],
+            'document_date' => ['nullable', 'date'],
         ];
     }
 
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    protected function failedValidation(Validator $validator): void
+    {
+        $failedFileRules = $validator->failed()['file'] ?? [];
+
+        abort_if(isset($failedFileRules['Mimes']), 415);
+        abort_if(isset($failedFileRules['Max']), 413);
+
+        parent::failedValidation($validator);
     }
 }

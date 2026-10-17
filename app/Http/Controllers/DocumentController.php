@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\UploadDocumentAction;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Resources\DocumentResource;
+use App\Models\DataObjects\DocumentDataObject;
 use App\Models\Document;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 
 class DocumentController extends Controller
 {
@@ -18,11 +21,20 @@ class DocumentController extends Controller
         return DocumentResource::collection(Document::all());
     }
 
-    public function store(DocumentRequest $request)
+    /**
+     * @throws \Throwable
+     */
+    public function store(DocumentRequest $request, UploadDocumentAction $uploadDocumentAction): JsonResponse
     {
         $this->authorize('create', Document::class);
 
-        return new DocumentResource(Document::create($request->validated()));
+        $file = $request->file('file');
+
+        $document = $uploadDocumentAction(DocumentDataObject::fromRequest($request), $file);
+
+        return (new DocumentResource($document))
+            ->response()
+            ->header('Location', route('documents.show', $document));
     }
 
     public function show(Document $document)

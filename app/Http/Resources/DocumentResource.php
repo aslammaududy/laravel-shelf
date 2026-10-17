@@ -18,19 +18,17 @@ class DocumentResource extends JsonResource
             'mime_type' => $this->mime_type,
             'size_bytes' => $this->size_bytes,
             'sha256' => $this->sha256,
-            'storage_key' => $this->storage_key,
             'doc_type' => $this->doc_type,
-            'document_date' => $this->document_date,
+            'document_date' => $this->document_date?->toDateString(),
             'notes' => $this->notes,
             'content_text' => $this->content_text,
-            'search_vector' => $this->search_vector,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 
             'folder_id' => $this->folder_id,
             'uploaded_by' => $this->uploaded_by,
 
-            'parent' => new FolderResource($this->whenLoaded('parent')),
+            'folder' => new FolderResource($this->whenLoaded('folder')),
         ];
     }
 }
