@@ -32,4 +32,17 @@ class DocumentResource extends JsonResource
             'folder' => new FolderResource($this->whenLoaded('folder')),
         ];
     }
+
+    public function paginationInformation($request, $paginated, $default): array
+    {
+        $paginated['meta']['page'] = $paginated['meta']['current_page'];
+        $paginated['meta']['total_pages'] = $paginated['meta']['total'];
+
+        unset($paginated['meta']['current_page']);
+        unset($paginated['meta']['last_page']);
+
+        return $default;
+    }
+
+
 }

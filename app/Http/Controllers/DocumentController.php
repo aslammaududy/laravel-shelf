@@ -18,7 +18,7 @@ class DocumentController extends Controller
     {
         $this->authorize('viewAny', Document::class);
 
-        return DocumentResource::collection(Document::all());
+        return DocumentResource::collection(Document::latest()->paginate(25));
     }
 
     /**
