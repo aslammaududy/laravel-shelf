@@ -42,4 +42,9 @@ class Document extends Model
             'document_date' => 'date',
         ];
     }
+
+    public function isPreviewable(): bool
+    {
+        return in_array($this->mime_type, ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/tiff'], true);
+    }
 }

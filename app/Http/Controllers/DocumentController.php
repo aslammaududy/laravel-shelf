@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\DownloadDocumentAction;
+use App\Actions\PreviewDocumentAction;
 use App\Actions\UploadDocumentAction;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Resources\DocumentResource;
@@ -69,5 +70,12 @@ class DocumentController extends Controller
         $this->authorize('viewAny', $document);
 
         return $download($document);
+    }
+
+    public function preview(Document $document, PreviewDocumentAction $preview): StreamedResponse
+    {
+        $this->authorize('view', $document);
+
+        return $preview($document);
     }
 }
