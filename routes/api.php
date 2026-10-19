@@ -13,4 +13,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('documents', DocumentController::class);
+    Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
 });

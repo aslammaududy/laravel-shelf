@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\DownloadDocumentAction;
 use App\Actions\UploadDocumentAction;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Resources\DocumentResource;
@@ -9,6 +10,7 @@ use App\Models\DataObjects\DocumentDataObject;
 use App\Models\Document;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocumentController extends Controller
 {
@@ -60,5 +62,12 @@ class DocumentController extends Controller
         $document->delete();
 
         return response()->json();
+    }
+
+    public function download(Document $document, DownloadDocumentAction $download): StreamedResponse
+    {
+        $this->authorize('viewAny', $document);
+
+        return $download($document);
     }
 }

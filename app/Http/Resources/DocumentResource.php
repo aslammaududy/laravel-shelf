@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class DocumentResource extends JsonResource
 {
     public static $wrap = null;
+
     public function toArray(Request $request): array
     {
         return [
@@ -43,6 +44,4 @@ class DocumentResource extends JsonResource
 
         return $default;
     }
-
-
 }
