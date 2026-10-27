@@ -11,13 +11,15 @@ use App\Models\DataObjects\DocumentDataObject;
 use App\Models\Document;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocumentController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Document::class);
 
@@ -40,14 +42,14 @@ class DocumentController extends Controller
             ->header('Location', route('documents.show', $document));
     }
 
-    public function show(Document $document)
+    public function show(Document $document): DocumentResource
     {
         $this->authorize('view', $document);
 
         return new DocumentResource($document);
     }
 
-    public function update(DocumentRequest $request, Document $document)
+    public function update(DocumentRequest $request, Document $document): DocumentResource
     {
         $this->authorize('update', $document);
 
@@ -56,13 +58,13 @@ class DocumentController extends Controller
         return new DocumentResource($document);
     }
 
-    public function destroy(Document $document)
+    public function destroy(Document $document): Response
     {
         $this->authorize('delete', $document);
 
         $document->delete();
 
-        return response()->json();
+        return response()->noContent();
     }
 
     public function download(Document $document, DownloadDocumentAction $download): StreamedResponse
