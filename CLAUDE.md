@@ -161,8 +161,9 @@ Reply in caveman style (full) in all Shelf work: reviews, explanations and insig
 
 - Done in Laravel: schema, auth (login, logout, /me), Problem Details error rendering, slice 1 (upload, list, view, edit, preview, download). All Hurl tests passed on 2026-10-19.
 - Cross-stack decisions from slice 1: preview allows only `application/pdf`, `image/jpeg`, `image/png`, `image/webp`, `image/tiff`; any other type gets 415 Problem Details. The type check runs before the missing-file check (415 before 404). Preview sends `Content-Disposition: inline`, download sends `attachment`.
-- Next: slice 2 (folders and tags) in Laravel.
-- Withdrawn findings, do not raise again: `$this->authorize` in `store` (slice 5); controller reading the file and passing it beside the DTO (lines 30/32) is fine.
+- Slice 2 in Laravel: folders (create, list, view, rename/move, delete) reviewed and done on 2026-10-27. Tags are next.
+- Cross-stack decisions from slice 2 folders: a move into itself or any subfolder returns 422 on `parent_id`, checked in the update request by walking up from the target parent. System folders (`created_by` null, such as Inbox) cannot be updated or deleted (409). Deleting a folder with subfolders or documents returns 409 "Folder is not empty." (no recursive delete, by PRD). Delete returns 204.
+- Withdrawn findings, do not raise again: `$this->authorize` in `store` (slice 5); controller reading the file and passing it beside the DTO (lines 30/32) is fine; in `FolderDataObject`, the `is_movable` name, its inline comment, and the `Arrayable` comment and trait use are the user's choice; one DTO for both folder requests is fine.
 
 ## Reviews
 

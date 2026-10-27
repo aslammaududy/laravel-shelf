@@ -4,9 +4,12 @@ namespace App\Models\DataObjects;
 
 use App\Enums\DocumentType;
 use App\Http\Requests\DocumentRequest;
+use App\Traits\Arrayable;
 
 final class DocumentDataObject
 {
+    use Arrayable;
+
     private const string DEFAULT_FOLDER_ID = '01a13e2c-4342-704f-b55b-e7c90248e3cd';
 
     public function __construct(
@@ -36,10 +39,5 @@ final class DocumentDataObject
             notes: $request->notes,
             uploaded_by: $request->user()->id,
         );
-    }
-
-    public function toArray(): array
-    {
-        return get_object_vars($this);
     }
 }

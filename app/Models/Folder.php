@@ -34,4 +34,19 @@ class Folder extends Model
     {
         return $this->hasMany(Document::class, 'folder_id');
     }
+
+    public function isSystem(): bool
+    {
+        return is_null($this->created_by);
+    }
+
+    public function hasSubfolders(): bool
+    {
+        return $this->children()->exists();
+    }
+
+    public function containsDocuments(): bool
+    {
+        return $this->documents()->exists();
+    }
 }

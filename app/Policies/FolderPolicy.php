@@ -10,17 +10,38 @@ class FolderPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool {}
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
 
-    public function view(User $user, Folder $folder): bool {}
+    public function view(User $user, Folder $folder): bool
+    {
+        return true;
+    }
 
-    public function create(User $user): bool {}
+    public function create(User $user): bool
+    {
+        return true;
+    }
 
-    public function update(User $user, Folder $folder): bool {}
+    public function update(User $user, Folder $folder): bool
+    {
+        return true;
+    }
 
-    public function delete(User $user, Folder $folder): bool {}
+    public function delete(User $user, Folder $folder): bool
+    {
+        return true;
+    }
 
-    public function restore(User $user, Folder $folder): bool {}
+    public function restore(User $user, Folder $folder): bool
+    {
+        return true;
+    }
 
-    public function forceDelete(User $user, Folder $folder): bool {}
+    public function forceDelete(User $user, Folder $folder): bool
+    {
+        return true;
+    }
 }
