@@ -6,6 +6,8 @@ use App\Actions\DownloadDocumentAction;
 use App\Actions\PreviewDocumentAction;
 use App\Actions\UploadDocumentAction;
 use App\Http\Requests\DocumentRequest;
+use App\Http\Requests\ListDocumentRequest;
+use App\Http\Requests\UpdateDocumentRequest;
 use App\Http\Resources\DocumentResource;
 use App\Models\DataObjects\DocumentDataObject;
 use App\Models\Document;
@@ -19,11 +21,19 @@ class DocumentController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(): AnonymousResourceCollection
+    public function index(ListDocumentRequest $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Document::class);
 
-        return DocumentResource::collection(Document::latest()->paginate(25));
+        $sort = $request->sort ?? '-created_at';
+        $column = ltrim($sort, '-');
+        $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
+
+        $documents = Document::orderBy($column, $direction)
+            ->orderByDesc('id')
+            ->paginate($request->per_page ?? 25);
+
+        return DocumentResource::collection($documents);
     }
 
     /**
@@ -49,7 +59,7 @@ class DocumentController extends Controller
         return new DocumentResource($document);
     }
 
-    public function update(DocumentRequest $request, Document $document): DocumentResource
+    public function update(UpdateDocumentRequest $request, Document $document): DocumentResource
     {
         $this->authorize('update', $document);
 

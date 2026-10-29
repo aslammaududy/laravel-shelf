@@ -9,16 +9,12 @@ use Illuminate\Validation\Rule;
 
 class DocumentRequest extends FormRequest
 {
-    private const int MAX_UPLOAD_SIZE_KB = 102400;
-
-    private const string ALLOWED_TYPES = 'pdf,jpeg,png,webp,tiff,docx,xlsx';
-
     public function rules(): array
     {
         return [
             'folder_id' => ['nullable', 'uuid', Rule::exists('folders', 'id')],
-            'title' => ['nullable', 'string'],
-            'file' => ['required', 'file', 'mimes:'.self::ALLOWED_TYPES, 'max:'.self::MAX_UPLOAD_SIZE_KB],
+            'title' => ['nullable', 'string', 'max:255'],
+            'file' => ['required', 'file', 'mimes:'.config('document.allowed_types'), 'max:'.config('document.max_upload_size_kb')],
             'doc_type' => ['nullable', Rule::enum(DocumentType::class)],
             'notes' => ['nullable', 'string', 'max:10000'],
             'document_date' => ['nullable', 'date'],
