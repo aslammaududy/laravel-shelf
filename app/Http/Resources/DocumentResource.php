@@ -31,6 +31,8 @@ class DocumentResource extends JsonResource
             'uploaded_by' => $this->uploadedBy,
 
             'folder' => new FolderResource($this->whenLoaded('folder')),
+
+            'tags' => TagResource::collection($this->tags),
         ];
     }
 }

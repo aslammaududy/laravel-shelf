@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\DownloadDocumentAction;
 use App\Actions\PreviewDocumentAction;
+use App\Actions\UpdateDocumentAction;
 use App\Actions\UploadDocumentAction;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\ListDocumentRequest;
@@ -29,7 +30,8 @@ class DocumentController extends Controller
         $column = ltrim($sort, '-');
         $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
 
-        $documents = Document::orderBy($column, $direction)
+        $documents = Document::with('tags')
+            ->orderBy($column, $direction)
             ->orderByDesc('id')
             ->paginate($request->per_page ?? 25);
 
@@ -56,16 +58,19 @@ class DocumentController extends Controller
     {
         $this->authorize('view', $document);
 
-        return new DocumentResource($document);
+        return new DocumentResource($document->load('tags'));
     }
 
-    public function update(UpdateDocumentRequest $request, Document $document): DocumentResource
+    /**
+     * @throws \Throwable
+     */
+    public function update(UpdateDocumentRequest $request, Document $document, UpdateDocumentAction $updateDocumentAction): DocumentResource
     {
         $this->authorize('update', $document);
 
-        $document->update($request->validated());
+        $document = $updateDocumentAction($request->validated(), $document);
 
-        return new DocumentResource($document);
+        return new DocumentResource($document->load('tags'));
     }
 
     public function destroy(Document $document): Response

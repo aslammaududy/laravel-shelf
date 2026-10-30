@@ -16,6 +16,8 @@ class UpdateDocumentRequest extends FormRequest
             'doc_type' => ['sometimes', Rule::enum(DocumentType::class)],
             'notes' => ['sometimes', 'nullable', 'string', 'max:10000'],
             'document_date' => ['sometimes', 'nullable', 'date'],
+            'tags' => ['sometimes', 'array'],
+            'tags.*' => ['uuid', Rule::exists('tags', 'id')],
         ];
     }
 
