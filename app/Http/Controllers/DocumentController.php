@@ -49,7 +49,7 @@ class DocumentController extends Controller
 
         $document = $uploadDocumentAction(DocumentDataObject::fromRequest($request), $file);
 
-        return (new DocumentResource($document))
+        return (new DocumentResource($document->load('tags')))
             ->response()
             ->header('Location', route('documents.show', $document));
     }

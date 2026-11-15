@@ -32,7 +32,7 @@ class DocumentResource extends JsonResource
 
             'folder' => new FolderResource($this->whenLoaded('folder')),
 
-            'tags' => TagResource::collection($this->tags),
+            'tags' => $this->whenLoaded('tags', fn () => $this->tags->pluck('name')->sort(SORT_NATURAL | SORT_FLAG_CASE)->values()),
         ];
     }
 }

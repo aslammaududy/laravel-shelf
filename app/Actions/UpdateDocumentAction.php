@@ -17,7 +17,10 @@ class UpdateDocumentAction
             $document->update(Arr::except($validatedInput, ['tags']));
 
             if (isset($validatedInput['tags'])) {
-                $document->tags()->sync($validatedInput['tags']);
+                $organizeTagAction = new OrganizeTagAction;
+
+                $organizedTags = $organizeTagAction($validatedInput['tags']);
+                $document->tags()->sync($organizedTags);
             }
         });
 
