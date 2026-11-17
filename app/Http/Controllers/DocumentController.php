@@ -16,6 +16,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocumentController extends Controller
@@ -67,6 +69,8 @@ class DocumentController extends Controller
     public function update(UpdateDocumentRequest $request, Document $document, UpdateDocumentAction $updateDocumentAction): DocumentResource
     {
         $this->authorize('update', $document);
+
+        throw_if(count($request->all()) === 0, ValidationException::withMessages(["body cannot be empty"]));
 
         $document = $updateDocumentAction($request->validated(), $document);
 

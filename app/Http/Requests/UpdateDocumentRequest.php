@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\DocumentType;
 use Illuminate\Foundation\Http\FormRequest;
+use \Illuminate\Validation\Validator;
 use Illuminate\Validation\Rule;
 
 class UpdateDocumentRequest extends FormRequest
@@ -24,5 +25,19 @@ class UpdateDocumentRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    public function after()
+    {
+        return [
+            function (Validator $validator) {
+                $allowed = array_keys($this->rules());
+                $unexpected = array_diff(array_keys($this->all()), $allowed);
+
+                foreach ($unexpected as $field) {
+                    $validator->errors()->add($field, "The field '{$field}' is not recognized.");
+                }
+            }
+        ];
     }
 }
