@@ -17,7 +17,7 @@ class UpdateDocumentRequest extends FormRequest
             'notes' => ['sometimes', 'nullable', 'string', 'max:10000'],
             'document_date' => ['sometimes', 'nullable', 'date'],
             'tags' => ['sometimes', 'array'],
-            'tags.*' => ['string'],
+            'tags.*' => ['string', 'max:50'],
         ];
     }
 
