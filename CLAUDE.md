@@ -159,9 +159,9 @@ Reply in caveman style (full) in all Shelf work: reviews, explanations and insig
 
 ## Status
 
-- Done in Laravel: schema, auth (login, logout, /me), Problem Details error rendering, slice 1 (upload, list, view, edit, preview, download). The status note from 2026-10-19 said all Hurl tests passed, but a run on 2026-10-27 showed `03-documents.hurl` failing with code unchanged since slice 1: `PATCH /documents` reuses the upload request (requires `file`), and `DocumentResource::paginationInformation` returns `$default`, so the `page`/`total_pages` meta is never applied. Run the full Hurl suite before marking a slice done.
+- Done in Laravel: schema, auth (login, logout, /me), Problem Details error rendering, slice 1 (upload, list, view, edit, preview, download). Run the full Hurl suite before marking a slice done.
 - Cross-stack decisions from slice 1: preview allows only `application/pdf`, `image/jpeg`, `image/png`, `image/webp`, `image/tiff`; any other type gets 415 Problem Details. The type check runs before the missing-file check (415 before 404). Preview sends `Content-Disposition: inline`, download sends `attachment`.
-- Slice 2 in Laravel: folders (create, list, view, rename/move, delete) reviewed and done on 2026-10-27. Tags are next.
+- Slice 2 in Laravel: folders (create, list, view, rename/move, delete) reviewed and done on 2026-10-27. Tags (set by name, sorted name list on documents, prefix autocomplete on `GET /tags`) done on 2026-11-18; full Hurl suite passes. Slice 2 is done in Laravel.
 - Cross-stack decisions from slice 2 folders: a move into itself or any subfolder returns 422 on `parent_id`, checked in the update request by walking up from the target parent. System folders (`created_by` null, such as Inbox) cannot be updated or deleted (409). Deleting a folder with subfolders or documents returns 409 "Folder is not empty." (no recursive delete, by PRD). Delete returns 204.
 - Withdrawn findings, do not raise again: `$this->authorize` in `store` (slice 5); controller reading the file and passing it beside the DTO (lines 30/32) is fine; in `FolderDataObject`, the `is_movable` name, its inline comment, and the `Arrayable` comment and trait use are the user's choice; one DTO for both folder requests is fine.
 
@@ -182,8 +182,8 @@ The goal of every review is better code, not passing tests.
 Every build (Laravel, then .NET, then Loco) delivers the API in these slices:
 
 1. **Sign-in and documents**: upload, list, view, edit, preview, download (FR-1, FR-3, FR-5). Done in Laravel.
-2. **Folders and tags** (FR-2). **Current slice.**
-3. **Search** (FR-4).
+2. **Folders and tags** (FR-2). Done in Laravel.
+3. **Search** (FR-4). **Current slice.**
 4. **Trash and the purge job** (FR-7).
 5. **Access control and audit log** (FR-6, FR-9): roles, per-folder permissions, policies, authorization, 403. The OpenAPI marks 403 as "used from slice 5".
 
