@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Jobs\ExtractTextFromDocumentJob;
 use App\Models\DataObjects\DocumentDataObject;
 use App\Models\Document;
 use Illuminate\Http\UploadedFile;
@@ -23,11 +24,15 @@ class UploadDocumentAction
         throw_if($storageKey === false, RuntimeException::class, 'File write failed.');
 
         try {
-            return Document::create([...$data->toArray(), 'storage_key' => $storageKey]);
+            $document = Document::create([...$data->toArray(), 'storage_key' => $storageKey]);
         } catch (\Throwable $throwable) {
             Storage::delete($storageKey);
 
             throw $throwable;
         }
+
+        ExtractTextFromDocumentJob::dispatch($document);
+
+        return $document;
     }
 }
