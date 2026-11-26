@@ -11,4 +11,14 @@ class TextExtractor
     {
         return Pdf::getText(Storage::path($path));
     }
+
+    public function fromWord(string $path): string
+    {
+        return (new WordExtractor)->getText(Storage::path($path));
+    }
+
+    public function fromSpreadsheet(string $path): string
+    {
+        return (new SpreadsheetExtractor)->getText(Storage::path($path));
+    }
 }

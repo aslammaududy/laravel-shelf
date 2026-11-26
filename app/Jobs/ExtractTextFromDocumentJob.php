@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Facades\TextExtractor;
 use App\Models\Document;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,7 +19,10 @@ class ExtractTextFromDocumentJob implements ShouldQueue
     public function handle(): void
     {
         $contentText = match ($this->document->mime_type) {
-            'application/pdf' => \App\Facades\TextExtractor::fromPdf($this->document->storage_key),
+            'application/pdf' => TextExtractor::fromPdf($this->document->storage_key),
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => TextExtractor::fromWord($this->document->storage_key),
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => TextExtractor::fromSpreadsheet($this->document->storage_key),
+            default => null
         };
 
         $this->document->content_text = $contentText;
